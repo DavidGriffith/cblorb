@@ -155,7 +155,7 @@ blurb_command syntaxes[] = {
 	{ "sound N \"filename\" repeat forever",
 			"sound %d \"%[^\"]\" repeat forever %n", OPS_1NUMBER_1TEXT, TRUE },
 	{ "sound N \"filename\" song", "sound %d \"%[^\"]\" song %n", OPS_1NUMBER_1TEXT, TRUE },
-	{ "sound N \"filename\"", "sound %d \"%[^\"]\" %n", OPS_2TEXT, FALSE },
+	{ "sound ID \"filename\"", "sound %d \"%[^\"]\" %n", OPS_2TEXT, FALSE },
 	{ "source", "source %n", OPS_NO, FALSE },
 	{ "source public", "source public %n", OPS_NO, FALSE },
 	{ "status \"template\" \"filename\"", "status \"%[^\"]\" \"%[^\"]\" %n", OPS_2TEXT, FALSE },
@@ -290,7 +290,7 @@ copied in |text1|, |num1|, ..., accordingly.
 			request_3(RELEASE_SOURCE_REQ, text1, text2, text3, FALSE); break;
 		case solution_COMMAND: request_1(SOLUTION_REQ, "", TRUE); break;
 		case solution_public_COMMAND: request_1(SOLUTION_REQ, "", FALSE); break;
-		case sound_COMMAND: sound_chunk(num1, text1); break;
+		case sound_COMMAND: sound_chunk(text1, text2); break;
 		case source_COMMAND: request_1(SOURCE_REQ, "", TRUE); break;
 		case source_public_COMMAND: request_1(SOURCE_REQ, "", FALSE); break;
 		case status_COMMAND: strcpy(status_template, text1); strcpy(status_file, text2); break;

@@ -449,6 +449,23 @@ is where those are added (to the other links already present, that is).
 			}
 }
 
+@p Inform6 Constants.
+The older Blorb creation program, |perlBlorb| would emit helpful 
+constants that allow the programmer to write |PlaySound(SOUND_Boom)| 
+rather than |PlaySound(5)|.  This allows the programmer to more easily 
+remember meaningful names instead of resource numbers.  To use this 
+feature, the programmer  should first declare in a Blurb file what names 
+correspond to what sounds or pictures.  Then |cBlorb| is run with the 
+-constant flag to emit the list of constants.  This code can then be 
+included in the Inform6 code.  Whenever the Blurb file is changed, this 
+must be done again.
+
+@c
+void emit_i6_constant(char *type, char *name, int number) {
+	printf("Constant %s_%s = %d;\n", type, name, number);
+}
+
+
 @p Blorb relocation.
 This is a little dodge used to make the process of releasing games in
 Inform 7 more seamless: see the manual for an explanation.

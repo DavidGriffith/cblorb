@@ -100,6 +100,16 @@ with no further chunks inside.
 @c
 chunk_metadata *current_chunk = NULL;
 
+@ Each chunk must have a resource number.  This can be explicitly 
+supplied in the Blurb file or the next available number chosen.  This 
+function returns the next available resource number.
+
+@c
+int get_next_resource_number() {
+	return ++resource_num;
+}
+
+
 @ Each chunk is ``added'' in one of two ways. {\it Either} we supply a filename
 for an existing binary file on disc which will hold the data we want to
 write, {\it or} we supply a |NULL| filename and a |data| pointer to |length|
@@ -278,9 +288,10 @@ adding MOD (``SoundTracker'') or MIDI files, so both are supported here.
 There can be any number of these chunks, too.
 
 @c
-/**/ void sound_chunk(int n, char *fn) {
+/**/ void sound_chunk(char *name, char *fn) {
 	char *p = get_filename_extension(fn);
 	char *type = "AIFF";
+	int num;
 	if (*p == '.') {
 		p++;
 		if ((*p == 'o') || (*p == 'O')) type = "OGGV";
@@ -289,7 +300,9 @@ There can be any number of these chunks, too.
 			else type = "MOD ";
 		}
 	}
-    add_chunk_to_blorb(type, n, fn, "Snd ", NULL, 0);
+	num = get_next_resource_number();
+	emit_i6_constant("SOUND", name, num);
+	add_chunk_to_blorb(type, num, fn, "Snd ", NULL, 0);
 	no_sounds_included++;
 }
 
