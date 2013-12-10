@@ -106,7 +106,7 @@ function returns the next available resource number.
 
 @c
 int get_next_resource_number() {
-	return ++resource_num;
+	return resource_num++;
 }
 
 
@@ -292,6 +292,7 @@ There can be any number of these chunks, too.
 	char *p = get_filename_extension(fn);
 	char *type = "AIFF";
 	int num;
+	int snum;
 	if (*p == '.') {
 		p++;
 		if ((*p == 'o') || (*p == 'O')) type = "OGGV";
@@ -301,6 +302,9 @@ There can be any number of these chunks, too.
 		}
 	}
 	num = get_next_resource_number();
+	snum = (int) strtol(name, NULL, 10);
+	if (snum > 0 && snum != num)
+		error("resource number mismatch.");
 	emit_i6_constant("SOUND", name, num);
 	add_chunk_to_blorb(type, num, fn, "Snd ", NULL, 0);
 	no_sounds_included++;
