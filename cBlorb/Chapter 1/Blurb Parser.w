@@ -155,7 +155,7 @@ blurb_command syntaxes[] = {
 	{ "sound N \"filename\" repeat forever",
 			"sound %d \"%[^\"]\" repeat forever %n", OPS_1NUMBER_1TEXT, TRUE },
 	{ "sound N \"filename\" song", "sound %d \"%[^\"]\" song %n", OPS_1NUMBER_1TEXT, TRUE },
-	{ "sound ID \"filename\"", "sound %[^\"] \"%[^\"]\" %n", OPS_2TEXT, FALSE },
+	{ "sound ID \"filename\"", "sound %20[A-Za-z0-9_]  \"%[^\"]\" %n", OPS_2TEXT, FALSE },
 	{ "source", "source %n", OPS_NO, FALSE },
 	{ "source public", "source public %n", OPS_NO, FALSE },
 	{ "status \"template\" \"filename\"", "status \"%[^\"]\" \"%[^\"]\" %n", OPS_2TEXT, FALSE },
