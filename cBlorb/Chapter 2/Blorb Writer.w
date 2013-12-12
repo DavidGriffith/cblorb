@@ -100,16 +100,6 @@ with no further chunks inside.
 @c
 chunk_metadata *current_chunk = NULL;
 
-@ Each chunk must have a resource number.  This can be explicitly 
-supplied in the Blurb file or the next available number chosen.  This 
-function returns the next available resource number.
-
-@c
-int get_next_resource_number() {
-	return resource_num++;
-}
-
-
 @ Each chunk is ``added'' in one of two ways. {\it Either} we supply a filename
 for an existing binary file on disc which will hold the data we want to
 write, {\it or} we supply a |NULL| filename and a |data| pointer to |length|
@@ -269,14 +259,20 @@ disc, and in a format which Blorb allows: for Inform 7 use, this will always
 be PNG or JPEG. There can be any number of these chunks.
 
 @c
-/**/ void picture_chunk(int n, char *fn) {
+/**/ void picture_chunk(char *name, char *fn) {
 	char *p = get_filename_extension(fn);
 	char *type = "PNG ";
+	int string_num;
 	if (*p == '.') {
 		p++;
 		if ((*p == 'j') || (*p == 'J')) type = "JPEG";
 	}
-    add_chunk_to_blorb(type, n, fn, "Pict", NULL, 0);
+	string_num = (int) strtol(name, NULL, 10);
+	if (string_num > 0 && string_num != resource_num)
+		error("PICTURE resource number mismatch.");
+	emit_i6_constant("PICTURE", name, resource_num);
+	add_chunk_to_blorb(type, resource_num, fn, "Pict", NULL, 0);
+	resource_num++;
 	no_pictures_included++;
 }
 
@@ -291,8 +287,7 @@ There can be any number of these chunks, too.
 /**/ void sound_chunk(char *name, char *fn) {
 	char *p = get_filename_extension(fn);
 	char *type = "AIFF";
-	int num;
-	int snum;
+	int string_num;
 	if (*p == '.') {
 		p++;
 		if ((*p == 'o') || (*p == 'O')) type = "OGGV";
@@ -301,12 +296,12 @@ There can be any number of these chunks, too.
 			else type = "MOD ";
 		}
 	}
-	num = get_next_resource_number();
-	snum = (int) strtol(name, NULL, 10);
-	if (snum > 0 && snum != num)
-		error("resource number mismatch.");
-	emit_i6_constant("SOUND", name, num);
-	add_chunk_to_blorb(type, num, fn, "Snd ", NULL, 0);
+	string_num = (int) strtol(name, NULL, 10);
+	if (string_num > 0 && string_num != resource_num)
+		error("SOUND resource number mismatch.");
+	emit_i6_constant("SOUND", name, resource_num);
+	add_chunk_to_blorb(type, resource_num, fn, "Snd ", NULL, 0);
+	resource_num++;
 	no_sounds_included++;
 }
 

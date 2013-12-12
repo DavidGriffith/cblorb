@@ -133,7 +133,7 @@ blurb_command syntaxes[] = {
 	{ "palette 32 bit", "palette 32 bit %n", OPS_NO, TRUE },
 	{ "picture N \"filename\" scale ...",
 			"picture %d \"%[^\"]\" scale %s %n", OPS_1NUMBER_2TEXTS, TRUE },
-	{ "picture N \"filename\"", "picture %d \"%[^\"]\" %n", OPS_1NUMBER_1TEXT, FALSE },
+	{ "picture ID \"filename\"", "picture %20[A-Za-z0-9_] \"%[^\"]\" %n", OPS_2TEXT, FALSE },
 	{ "placeholder [name] = \"text\"", "placeholder [%[A-Z]] = \"%[^\"]\" %n", OPS_2TEXT, FALSE },
 	{ "project folder \"pathname\"", "project folder \"%[^\"]\" %n", OPS_1TEXT, FALSE },
 	{ "release \"text\"", "release \"%[^\"]\" %n", OPS_1TEXT, FALSE },
@@ -271,7 +271,7 @@ copied in |text1|, |num1|, ..., accordingly.
 		case interpreter_COMMAND:
 			set_placeholder_to("INTERPRETERVMIS", text2, 0);
 			request_1(INTERPRETER_REQ, text1, FALSE); break;
-		case picture_COMMAND: picture_chunk(num1, text1); break;
+		case picture_COMMAND: picture_chunk(text1, text2); break;
 		case placeholder_COMMAND: set_placeholder_to(text1, text2, 0); break;
 		case project_folder_COMMAND: strcpy(project_folder, text1); break;
 		case release_COMMAND:
