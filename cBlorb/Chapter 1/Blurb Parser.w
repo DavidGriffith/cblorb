@@ -69,13 +69,14 @@ indexes into the syntaxes table below.
 @d OPS_NO 1
 @d OPS_1TEXT 2
 @d OPS_2TEXT 3
-@d OPS_1NUMBER 4
-@d OPS_2NUMBER 5
-@d OPS_1NUMBER_1TEXT 6
-@d OPS_1NUMBER_2TEXTS 7
-@d OPS_1NUMBER_1TEXT_1NUMBER 8
-@d OPS_3NUMBER 9
-@d OPS_3TEXT 10
+@d OPS_2TEXT_1NUMBER 4
+@d OPS_1NUMBER 5
+@d OPS_2NUMBER 6
+@d OPS_1NUMBER_1TEXT 7
+@d OPS_1NUMBER_2TEXTS 8
+@d OPS_1NUMBER_1TEXT_1NUMBER 9
+@d OPS_3NUMBER 10
+@d OPS_3TEXT 11
 
 @ Each legal command syntax is stored as one of these structures.
 We will be parsing commands using the C library function |sscanf|,
@@ -131,8 +132,8 @@ blurb_command syntaxes[] = {
 	{ "palette { details }", "palette {%[^}]} %n", OPS_1TEXT, TRUE },
 	{ "palette 16 bit", "palette 16 bit %n", OPS_NO, TRUE },
 	{ "palette 32 bit", "palette 32 bit %n", OPS_NO, TRUE },
-	{ "picture N \"filename\" scale ...",
-			"picture %d \"%[^\"]\" scale %s %n", OPS_1NUMBER_2TEXTS, TRUE },
+	{ "picture ID \"filename\" scale ...",
+			"picture %20[A-Za-z0-9_] \"%[^\"]\" scale %s %n", OPS_3TEXT, TRUE },
 	{ "picture ID \"filename\"", "picture %20[A-Za-z0-9_] \"%[^\"]\" %n", OPS_2TEXT, FALSE },
 	{ "placeholder [name] = \"text\"", "placeholder [%[A-Z]] = \"%[^\"]\" %n", OPS_2TEXT, FALSE },
 	{ "project folder \"pathname\"", "project folder \"%[^\"]\" %n", OPS_1TEXT, FALSE },
@@ -149,12 +150,12 @@ blurb_command syntaxes[] = {
 	{ "resolution NxN", "resolution %d %n", OPS_1NUMBER, TRUE },
 	{ "solution", "solution %n", OPS_NO, FALSE },
 	{ "solution public", "solution public %n", OPS_NO, FALSE },
-	{ "sound N \"filename\" music", "sound %d \"%[^\"]\" music %n", OPS_1NUMBER_1TEXT, TRUE },
-	{ "sound N \"filename\" repeat N",
-			"sound %d \"%[^\"]\" repeat %d %n", OPS_1NUMBER_1TEXT_1NUMBER, TRUE },
-	{ "sound N \"filename\" repeat forever",
-			"sound %d \"%[^\"]\" repeat forever %n", OPS_1NUMBER_1TEXT, TRUE },
-	{ "sound N \"filename\" song", "sound %d \"%[^\"]\" song %n", OPS_1NUMBER_1TEXT, TRUE },
+	{ "sound ID \"filename\" music", "sound %20[A-Za-z0-9_] \"%[^\"]\" music %n", OPS_2TEXT, TRUE },
+	{ "sound ID \"filename\" repeat N",
+			"sound %20[A-Za-z0-9_] \"%[^\"]\" repeat %d %n", OPS_2TEXT_1NUMBER, TRUE },
+	{ "sound ID \"filename\" repeat forever",
+			"sound %20[A-Za-z0-9_] \"%[^\"]\" repeat forever %n", OPS_2TEXT, TRUE },
+	{ "sound ID \"filename\" song", "sound %20[A-Za-z0-9_] \"%[^\"]\" song %n", OPS_2TEXT, TRUE },
 	{ "sound ID \"filename\"", "sound %20[A-Za-z0-9_]  \"%[^\"]\" %n", OPS_2TEXT, FALSE },
 	{ "source", "source %n", OPS_NO, FALSE },
 	{ "source public", "source public %n", OPS_NO, FALSE },
@@ -224,6 +225,7 @@ copied in |text1|, |num1|, ..., accordingly.
 			case OPS_NO: sscanf(command, pr, &nm); break;
 			case OPS_1TEXT: sscanf(command, pr, text1, &nm); break;
 			case OPS_2TEXT: sscanf(command, pr, text1, text2, &nm); break;
+			case OPS_2TEXT_1NUMBER: sscanf(command, pr, text1, text2, &num1, &nm); break;
 			case OPS_1NUMBER: sscanf(command, pr, &num1, &nm); break;
 			case OPS_2NUMBER: sscanf(command, pr, &num1, &num2, &nm); break;
 			case OPS_1NUMBER_1TEXT: sscanf(command, pr, &num1, text1, &nm); break;
