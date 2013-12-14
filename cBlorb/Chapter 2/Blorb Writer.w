@@ -267,10 +267,14 @@ be PNG or JPEG. There can be any number of these chunks.
 		p++;
 		if ((*p == 'j') || (*p == 'J')) type = "JPEG";
 	}
-	string_num = (int) strtol(name, NULL, 10);
-	if (string_num > 0 && string_num != resource_num)
-		error("PICTURE resource number mismatch.");
-	emit_i6_constant("PICTURE", name, resource_num);
+	if (name[0] != 0) {
+		string_num = (int) strtol(name, NULL, 10);
+		if (string_num > 0 && string_num != resource_num)
+			error("PICTURE resource number mismatch.");
+		emit_i6_constant("PICTURE", name, resource_num);
+	} else {
+		printf("! Null picture ID, using %d\n", resource_num);
+	}
 	add_chunk_to_blorb(type, resource_num, fn, "Pict", NULL, 0);
 	resource_num++;
 	no_pictures_included++;
@@ -296,10 +300,15 @@ There can be any number of these chunks, too.
 			else type = "MOD ";
 		}
 	}
-	string_num = (int) strtol(name, NULL, 10);
-	if (string_num > 0 && string_num != resource_num)
-		error("SOUND resource number mismatch.");
-	emit_i6_constant("SOUND", name, resource_num);
+	if (name[0] != 0) {
+		string_num = (int) strtol(name, NULL, 10);
+		if (string_num > 0 && string_num != resource_num)
+			error("SOUND resource number mismatch.");
+		emit_i6_constant("SOUND", name, resource_num);
+	} else {
+		printf("! Null sound ID, using %d\n", resource_num);
+	}
+
 	add_chunk_to_blorb(type, resource_num, fn, "Snd ", NULL, 0);
 	resource_num++;
 	no_sounds_included++;
