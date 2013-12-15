@@ -262,10 +262,15 @@ be PNG or JPEG. There can be any number of these chunks.
 /**/ void picture_chunk(int num, char *fn) {
 	char *p = get_filename_extension(fn);
 	char *type = "PNG ";
+
+	if (num < 1)
+		fatal("Pict resource number is less than 1.");
+
 	if (*p == '.') {
 		p++;
 		if ((*p == 'j') || (*p == 'J')) type = "JPEG";
 	}
+
 	add_chunk_to_blorb(type, num, fn, "Pict", NULL, 0);
 	picture_resource_num++;
 	no_pictures_included++;
@@ -292,6 +297,10 @@ There can be any number of these chunks, too.
 /**/ void sound_chunk(int num, char *fn) {
 	char *p = get_filename_extension(fn);
 	char *type = "AIFF";
+
+	if (num < 3)
+		fatal("Snd resource number is less than 3.");
+
 	if (*p == '.') {
 		p++;
 		if ((*p == 'o') || (*p == 'O')) type = "OGGV";
@@ -300,6 +309,7 @@ There can be any number of these chunks, too.
 			else type = "MOD ";
 		}
 	}
+
 	add_chunk_to_blorb(type, num, fn, "Snd ", NULL, 0);
 	sound_resource_num++;
 	no_sounds_included++;
