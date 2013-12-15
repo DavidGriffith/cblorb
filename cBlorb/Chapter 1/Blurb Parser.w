@@ -35,37 +35,39 @@ indexes into the syntaxes table below.
 @d palette_32_bit_COMMAND 12
 @d picture_scaled_COMMAND 13
 @d picture_COMMAND 14
-@d picture_noid_COMMAND 15
-@d placeholder_COMMAND 16
-@d project_folder_COMMAND 17
-@d release_COMMAND 18
-@d release_file_COMMAND 19
-@d release_file_from_COMMAND 20
-@d release_source_COMMAND 21
-@d release_to_COMMAND 22
-@d resolution_max_COMMAND 23
-@d resolution_min_max_COMMAND 24
-@d resolution_min_COMMAND 25
-@d resolution_COMMAND 26
-@d solution_COMMAND 27
-@d solution_public_COMMAND 28
-@d sound_music_COMMAND 29
-@d sound_repeat_COMMAND 30
-@d sound_forever_COMMAND 31
-@d sound_song_COMMAND 32
-@d sound_COMMAND 33
-@d sound_noid_COMMAND 34
-@d source_COMMAND 35
-@d source_public_COMMAND 36
-@d status_COMMAND 37
-@d status_alternative_COMMAND 38
-@d status_instruction_COMMAND 39
-@d storyfile_include_COMMAND 40
-@d storyfile_COMMAND 41
-@d storyfile_leafname_COMMAND 42
-@d template_path_COMMAND 43
-@d website_COMMAND 44
-
+@d picture_text_COMMAND 15
+@d picture_noid_COMMAND 16
+@d placeholder_COMMAND 17
+@d project_folder_COMMAND 18
+@d release_COMMAND 19
+@d release_file_COMMAND 20
+@d release_file_from_COMMAND 21
+@d release_source_COMMAND 22
+@d release_to_COMMAND 23
+@d resolution_max_COMMAND 24
+@d resolution_min_max_COMMAND 25
+@d resolution_min_COMMAND 26
+@d resolution_COMMAND 27
+@d solution_COMMAND 28
+@d solution_public_COMMAND 29
+@d sound_music_COMMAND 30
+@d sound_repeat_COMMAND 31
+@d sound_forever_COMMAND 32
+@d sound_song_COMMAND 33
+@d sound_COMMAND 34
+@d sound_text_COMMAND 35
+@d sound_noid_COMMAND 36
+@d source_COMMAND 37
+@d source_public_COMMAND 38
+@d status_COMMAND 39
+@d status_alternative_COMMAND 40
+@d status_instruction_COMMAND 41
+@d storyfile_include_COMMAND 42
+@d storyfile_COMMAND 43
+@d storyfile_leafname_COMMAND 44
+@d template_path_COMMAND 45
+@d website_COMMAND 46
+ 
 @ A single number specifying various possible combinations of operands:
 
 @d OPS_NO 1
@@ -136,6 +138,7 @@ blurb_command syntaxes[] = {
 	{ "palette 32 bit", "palette 32 bit %n", OPS_NO, TRUE },
 	{ "picture ID \"filename\" scale ...",
 			"picture %20[A-Za-z0-9_] \"%[^\"]\" scale %s %n", OPS_3TEXT, TRUE },
+	{ "picture N \"filename\"", "picture %d \"%[^\"]\" %n", OPS_1NUMBER_1TEXT, FALSE },
 	{ "picture ID \"filename\"", "picture %20[A-Za-z0-9_] \"%[^\"]\" %n", OPS_2TEXT, FALSE },
 	{ "picture \"filename\"", "picture \"%[^\"]\" %n", OPS_1TEXT, FALSE },
 	{ "placeholder [name] = \"text\"", "placeholder [%[A-Z]] = \"%[^\"]\" %n", OPS_2TEXT, FALSE },
@@ -159,6 +162,7 @@ blurb_command syntaxes[] = {
 	{ "sound ID \"filename\" repeat forever",
 			"sound %20[A-Za-z0-9_] \"%[^\"]\" repeat forever %n", OPS_2TEXT, TRUE },
 	{ "sound ID \"filename\" song", "sound %20[A-Za-z0-9_] \"%[^\"]\" song %n", OPS_2TEXT, TRUE },
+	{ "sound N \"filename\"", "sound %d  \"%[^\"]\" %n", OPS_1NUMBER_1TEXT, FALSE },
 	{ "sound ID \"filename\"", "sound %20[A-Za-z0-9_]  \"%[^\"]\" %n", OPS_2TEXT, FALSE },
 	{ "sound \"filename\"", "sound \"%[^\"]\" %n", OPS_1TEXT, FALSE },
 	{ "source", "source %n", OPS_NO, FALSE },
@@ -277,8 +281,9 @@ copied in |text1|, |num1|, ..., accordingly.
 		case interpreter_COMMAND:
 			set_placeholder_to("INTERPRETERVMIS", text2, 0);
 			request_1(INTERPRETER_REQ, text1, FALSE); break;
-		case picture_COMMAND: picture_chunk(text1, text2); break;
-		case picture_noid_COMMAND: picture_chunk("", text1); break;
+		case picture_COMMAND: picture_chunk(num1, text1); break;
+		case picture_text_COMMAND: picture_chunk_text(text1, text2); break;
+		case picture_noid_COMMAND: picture_chunk_text("", text1); break;
 		case placeholder_COMMAND: set_placeholder_to(text1, text2, 0); break;
 		case project_folder_COMMAND: strcpy(project_folder, text1); break;
 		case release_COMMAND:
@@ -297,8 +302,9 @@ copied in |text1|, |num1|, ..., accordingly.
 			request_3(RELEASE_SOURCE_REQ, text1, text2, text3, FALSE); break;
 		case solution_COMMAND: request_1(SOLUTION_REQ, "", TRUE); break;
 		case solution_public_COMMAND: request_1(SOLUTION_REQ, "", FALSE); break;
-		case sound_COMMAND: sound_chunk(text1, text2); break;
-		case sound_noid_COMMAND: sound_chunk("", text1); break;
+		case sound_COMMAND: sound_chunk(num1, text1); break;
+		case sound_text_COMMAND: sound_chunk_text(text1, text2); break;
+		case sound_noid_COMMAND: sound_chunk_text("", text1); break;
 		case source_COMMAND: request_1(SOURCE_REQ, "", TRUE); break;
 		case source_public_COMMAND: request_1(SOURCE_REQ, "", FALSE); break;
 		case status_COMMAND: strcpy(status_template, text1); strcpy(status_file, text2); break;
