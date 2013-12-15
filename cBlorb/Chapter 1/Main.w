@@ -60,7 +60,8 @@ int no_pictures_included = 0; /* number of picture resources included in the blo
 int no_sounds_included = 0; /* number of sound resources included in the blorb */
 int HTML_pages_created = 0; /* number of pages created in the website, if any */
 int source_HTML_pages_created = 0; /* number of those holding source */
-int resource_num = 3; /* current resource number we're working on */
+int sound_resource_num = 3; /* current sound resource number we're working on */
+int picture_resource_num = 1; /* current picture resource number we're working on */
 
 int use_css_code_styles = FALSE; /* use |<span class="X">| markings when setting code */
 char project_folder[MAX_FILENAME_LENGTH]; /* pathname of I7 project folder, if any */
