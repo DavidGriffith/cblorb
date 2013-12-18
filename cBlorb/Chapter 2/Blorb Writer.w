@@ -5,6 +5,7 @@
 @Interface:
 
 -- Owns struct chunk_metadata (private)
+-- Owns struct resource_list (private)
 
 @Definitions:
 
@@ -50,6 +51,44 @@ typedef struct chunk_metadata {
 	int size; /* in bytes */
 	MEMORY_MANAGEMENT
 } chunk_metadata;
+
+
+@ It is not legal to have two or more Snd resources with the same number.  The 
+same goes for Pict resources.  These two linked lists are used to store all the 
+resource numbers encountered.  If we have a collision, this function returns 1.  
+If not, the number being checked is added to the list and 0 is returned.
+
+@c
+typedef struct resource_list resource_list;
+struct resource_list {
+	int num;
+	struct resource_list *n;
+};
+resource_list *sound_resource = NULL;
+resource_list *pict_resource = NULL;
+
+/**/ int resource_seen(resource_list **list, int value) {
+	/* No list case */
+	if (*list == NULL) {
+		*list = malloc(sizeof(resource_list));
+		(*list)->num = value;
+		(*list)->n = NULL;
+		return 0;
+	}
+
+	/* Search */
+	for ( ; *list != NULL; *list = (*list)->n) {
+		if ((*list)->num == value) return 1;
+		if ((*list)->n == NULL) break;
+	}
+
+	/* Not found, insert */
+	(*list)->n = malloc(sizeof(resource_list));
+	assert((*list)->n != NULL);
+	(*list)->n->num = value;
+	(*list)->n->n = NULL;
+	return 0;
+}
 
 @-------------------------------------------------------------------------------
 
@@ -270,9 +309,10 @@ be PNG or JPEG. There can be any number of these chunks.
 		p++;
 		if ((*p == 'j') || (*p == 'J')) type = "JPEG";
 	}
+	if (resource_seen(&pict_resource, num))
+		fatal("Duplicate Pict resource number.");
 
 	add_chunk_to_blorb(type, num, fn, "Pict", NULL, 0);
-	picture_resource_num++;
 	no_pictures_included++;
 }
 
@@ -283,6 +323,7 @@ be PNG or JPEG. There can be any number of these chunks.
 	} else {
 		emit_i6_constant("PICTURE", name, picture_resource_num);
 	}
+	sound_resource_num++;
 	picture_chunk(picture_resource_num, fn);
 }
 
@@ -309,9 +350,10 @@ There can be any number of these chunks, too.
 			else type = "MOD ";
 		}
 	}
+	if (resource_seen(&sound_resource, num))
+		fatal("Duplicate Snd resource number.");
 
 	add_chunk_to_blorb(type, num, fn, "Snd ", NULL, 0);
-	sound_resource_num++;
 	no_sounds_included++;
 }
 
@@ -322,6 +364,7 @@ There can be any number of these chunks, too.
 	} else {
 		emit_i6_constant("SOUND", name, sound_resource_num);
 	}
+	sound_resource_num++;
 	sound_chunk(sound_resource_num, fn);
 }
 

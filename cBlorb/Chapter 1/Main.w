@@ -13,6 +13,7 @@ obey them.
 #include "string.h"
 #include "time.h"
 #include "ctype.h"
+#include "assert.h"
 
 @ We identify which platform we're running on thus:
 
@@ -336,3 +337,4 @@ where they're used.
 		set_placeholder_to_number("BLORBFILESOUNDS", 0);
 		printf("! Completed: no blorb output requested\n");
 	}
+
