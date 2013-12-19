@@ -68,26 +68,17 @@ resource_list *sound_resource = NULL;
 resource_list *pict_resource = NULL;
 
 /**/ int resource_seen(resource_list **list, int value) {
-	/* No list case */
-	if (*list == NULL) {
-		*list = malloc(sizeof(resource_list));
-		(*list)->num = value;
-		(*list)->n = NULL;
-		return 0;
+	resource_list *p;
+	for(p = *list; p; p = p->n) {
+		if (p->num == value) return TRUE;
 	}
-
-	/* Search */
-	for ( ; *list != NULL; *list = (*list)->n) {
-		if ((*list)->num == value) return 1;
-		if ((*list)->n == NULL) break;
-	}
-
-	/* Not found, insert */
-	(*list)->n = malloc(sizeof(resource_list));
-	assert((*list)->n != NULL);
-	(*list)->n->num = value;
-	(*list)->n->n = NULL;
-	return 0;
+	p = *list;
+	*list = malloc(sizeof(resource_list));
+	if (*list == NULL)
+		fatal("Run out of memory: malloc failed");
+	(*list)->num = value;
+	(*list)->n = p;
+	return FALSE;
 }
 
 @-------------------------------------------------------------------------------
@@ -303,14 +294,14 @@ be PNG or JPEG. There can be any number of these chunks.
 	char *type = "PNG ";
 
 	if (num < 1)
-		fatal("Pict resource number is less than 1.");
+		fatal("Picture resource number is less than 1.");
 
 	if (*p == '.') {
 		p++;
 		if ((*p == 'j') || (*p == 'J')) type = "JPEG";
 	}
 	if (resource_seen(&pict_resource, num))
-		fatal("Duplicate Pict resource number.");
+		fatal("Duplicate Picture resource number.");
 
 	add_chunk_to_blorb(type, num, fn, "Pict", NULL, 0);
 	no_pictures_included++;
@@ -340,7 +331,7 @@ There can be any number of these chunks, too.
 	char *type = "AIFF";
 
 	if (num < 3)
-		fatal("Snd resource number is less than 3.");
+		fatal("Sound resource number is less than 3.");
 
 	if (*p == '.') {
 		p++;
@@ -351,7 +342,7 @@ There can be any number of these chunks, too.
 		}
 	}
 	if (resource_seen(&sound_resource, num))
-		fatal("Duplicate Snd resource number.");
+		fatal("Duplicate Sound resource number.");
 
 	add_chunk_to_blorb(type, num, fn, "Snd ", NULL, 0);
 	no_sounds_included++;
