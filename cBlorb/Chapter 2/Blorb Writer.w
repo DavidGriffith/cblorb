@@ -55,8 +55,7 @@ typedef struct chunk_metadata {
 
 @ It is not legal to have two or more Snd resources with the same number.  The 
 same goes for Pict resources.  These two linked lists are used to store all the 
-resource numbers encountered.  If we have a collision, this function returns 1.  
-If not, the number being checked is added to the list and 0 is returned.
+resource numbers encountered.
 
 @c
 typedef struct resource_list resource_list;
@@ -66,20 +65,6 @@ struct resource_list {
 };
 resource_list *sound_resource = NULL;
 resource_list *pict_resource = NULL;
-
-/**/ int resource_seen(resource_list **list, int value) {
-	resource_list *p;
-	for(p = *list; p; p = p->n) {
-		if (p->num == value) return TRUE;
-	}
-	p = *list;
-	*list = malloc(sizeof(resource_list));
-	if (*list == NULL)
-		fatal("Run out of memory: malloc failed");
-	(*list)->num = value;
-	(*list)->n = p;
-	return FALSE;
-}
 
 @-------------------------------------------------------------------------------
 
@@ -236,6 +221,28 @@ int index_entry_is_legal(char *entry) {
 			return TRUE;
     return FALSE;
 }
+
+@ This function checks a linked list to see if a resource number is used twice.  
+If so, TRUE is returned and the rest of the program is expected to immediately 
+exit with a fatal error.  Otherwise, FALSE is returned, indicating that 
+everything is fine.
+
+@c
+/**/ int resource_seen(resource_list **list, int value) {
+	resource_list *p;
+	for(p = *list; p; p = p->n) {
+		if (p->num == value) return TRUE;
+	}
+	p = *list;
+	*list = malloc(sizeof(resource_list));
+	if (*list == NULL)
+		fatal("Run out of memory: malloc failed");
+	(*list)->num = value;
+	(*list)->n = p;
+	return FALSE;
+}
+
+
 
 @ Because it will make a difference to how we embed a file into our Blorb,
 we need to know whether the chunk in question is already an IFF in its
