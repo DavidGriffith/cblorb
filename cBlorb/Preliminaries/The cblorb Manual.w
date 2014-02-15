@@ -12,10 +12,10 @@ doesn't usually communicate with them directly. Instead, the Inform user
 interface calls it when needed. The moment comes at the end of the
 translation process, but only when the Release button rather than the Go or
 Replay buttons was clicked. |cblorb| has two main jobs: to bind up the
-translated project, together with any pictures, sounds, or cover art, into
-a single file called a ``blorb'' which can be given to players on other
-machines to play; and to produce associated websites, solution files and so
-on as demanded by ``Release...'' instruction(s) in the source text.
+translated project, together with any pictures, sounds, data files or cover
+art, into a single file called a ``blorb'' which can be given to players on
+other machines to play; and to produce associated websites, solution files
+and so on as demanded by ``Release...'' instruction(s) in the source text.
 
 @ ``Blorb'' is a general-purpose wrapper format designed as a way to gather
 together audiovisual media and bibliographic data for works of IF. The
@@ -437,6 +437,20 @@ of a typical desktop of 2001.
 
 specifies that this is the cover art; it must also be declared with a
 |picture| command in the usual way, and must have picture ID 1.
+
+@ Fourth, commands for adding binary and textual resources:
+
+	|binary data| \bltoken{id} \bltoken{filename}
+	|form data| \bltoken{id} \bltoken{filename}
+	|text data| \bltoken{id} \bltoken{filename}
+
+Tells us to take the named file and make it the data resource with the
+given number. The first version marks the file as intended to be read
+either as a sequence of bytes or as a sequence of four-byte, big-endian
+words.  The second version is similar, except that the file is understood
+to be an IFF file itself and embedded in the blorb accordingly.  The third
+version signals that the story should read the file either as a sequence of
+Latin-1 characters or as UTF-8.
 
 @ Three commands help us to specify locations.
 
