@@ -321,7 +321,7 @@ be PNG or JPEG. There can be any number of these chunks.
 	} else {
 		emit_i6_constant("PICTURE", name, picture_resource_num);
 	}
-	sound_resource_num++;
+	picture_resource_num++;
 	picture_chunk(picture_resource_num, fn);
 }
 
