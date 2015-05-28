@@ -23,50 +23,59 @@ indexes into the syntaxes table below.
 @d author_COMMAND 0
 @d auxiliary_COMMAND 1
 @d base64_COMMAND 2
-@d copyright_COMMAND 3
-@d cover_COMMAND 4
-@d css_COMMAND 5
-@d ifiction_COMMAND 6
-@d ifiction_public_COMMAND 7
-@d ifiction_file_COMMAND 8
-@d interpreter_COMMAND 9
-@d palette_COMMAND 10
-@d palette_16_bit_COMMAND 11
-@d palette_32_bit_COMMAND 12
-@d picture_scaled_COMMAND 13
-@d picture_COMMAND 14
-@d picture_text_COMMAND 15
-@d picture_noid_COMMAND 16
-@d placeholder_COMMAND 17
-@d project_folder_COMMAND 18
-@d release_COMMAND 19
-@d release_file_COMMAND 20
-@d release_file_from_COMMAND 21
-@d release_source_COMMAND 22
-@d release_to_COMMAND 23
-@d resolution_max_COMMAND 24
-@d resolution_min_max_COMMAND 25
-@d resolution_min_COMMAND 26
-@d resolution_COMMAND 27
-@d solution_COMMAND 28
-@d solution_public_COMMAND 29
-@d sound_music_COMMAND 30
-@d sound_repeat_COMMAND 31
-@d sound_forever_COMMAND 32
-@d sound_song_COMMAND 33
-@d sound_COMMAND 34
-@d sound_text_COMMAND 35
-@d sound_noid_COMMAND 36
-@d source_COMMAND 37
-@d source_public_COMMAND 38
-@d status_COMMAND 39
-@d status_alternative_COMMAND 40
-@d status_instruction_COMMAND 41
-@d storyfile_include_COMMAND 42
-@d storyfile_COMMAND 43
-@d storyfile_leafname_COMMAND 44
-@d template_path_COMMAND 45
-@d website_COMMAND 46
+@d binary_data_COMMAND 3
+@d binary_data_text_COMMAND 4
+@d binary_data_noid_COMMAND 5
+@d copyright_COMMAND 6
+@d cover_COMMAND 7
+@d css_COMMAND 8
+@d form_data_COMMAND 9
+@d form_data_text_COMMAND 10
+@d form_data_noid_COMMAND 11
+@d ifiction_COMMAND 12
+@d ifiction_public_COMMAND 13
+@d ifiction_file_COMMAND 14
+@d interpreter_COMMAND 15
+@d palette_COMMAND 16
+@d palette_16_bit_COMMAND 17
+@d palette_32_bit_COMMAND 18
+@d picture_scaled_COMMAND 19
+@d picture_COMMAND 20
+@d picture_text_COMMAND 21
+@d picture_noid_COMMAND 22
+@d placeholder_COMMAND 23
+@d project_folder_COMMAND 24
+@d release_COMMAND 25
+@d release_file_COMMAND 26
+@d release_file_from_COMMAND 27
+@d release_source_COMMAND 28
+@d release_to_COMMAND 29
+@d resolution_max_COMMAND 30
+@d resolution_min_max_COMMAND 31
+@d resolution_min_COMMAND 32
+@d resolution_COMMAND 33
+@d solution_COMMAND 34
+@d solution_public_COMMAND 35
+@d sound_music_COMMAND 36
+@d sound_repeat_COMMAND 37
+@d sound_forever_COMMAND 38
+@d sound_song_COMMAND 39
+@d sound_COMMAND 40
+@d sound_text_COMMAND 41
+@d sound_noid_COMMAND 42
+@d source_COMMAND 43
+@d source_public_COMMAND 44
+@d status_COMMAND 45
+@d status_alternative_COMMAND 46
+@d status_instruction_COMMAND 47
+@d storyfile_include_COMMAND 48
+@d storyfile_COMMAND 49
+@d storyfile_leafname_COMMAND 50
+@d template_path_COMMAND 51
+@d text_data_COMMAND 52
+@d text_data_text_COMMAND 53
+@d text_data_noid_COMMAND 54
+@d website_COMMAND 55
  
 @ A single number specifying various possible combinations of operands:
 
@@ -125,9 +134,15 @@ blurb_command syntaxes[] = {
 			"auxiliary \"%[^\"]\" \"%[^\"]\" %n", OPS_2TEXT, FALSE },
 	{ "base64 \"filename\" to \"filename\"",
 			"base64 \"%[^\"]\" to \"%[^\"]\" %n", OPS_2TEXT, FALSE },
+	{ "binary data N \"filename\"", "binary data %d \"%[^\"]\" %n", OPS_1NUMBER_1TEXT, FALSE },
+	{ "binary data ID \"filename\"", "binary data %20[A-Za-z0-9_] \"%[^\"]\" %n", OPS_2TEXT, FALSE },
+	{ "binary data \"filename\"", "binary data \"%[^\"]\" %n", OPS_1TEXT, FALSE },
 	{ "copyright \"message\"", "copyright \"%[^\"]\" %n", OPS_1TEXT, FALSE },
 	{ "cover \"filename\"", "cover \"%[^\"]\" %n", OPS_1TEXT, FALSE },
 	{ "css", "css %n", OPS_NO, FALSE },
+	{ "form data N \"filename\"", "form data %d \"%[^\"]\" %n", OPS_1NUMBER_1TEXT, FALSE },
+	{ "form data ID \"filename\"", "form data %20[A-Za-z0-9_] \"%[^\"]\" %n", OPS_2TEXT, FALSE },
+	{ "form data \"filename\"", "form data \"%[^\"]\" %n", OPS_1TEXT, FALSE },
 	{ "ifiction", "ifiction %n", OPS_NO, FALSE },
 	{ "ifiction public", "ifiction public %n", OPS_NO, FALSE },
 	{ "ifiction \"filename\" include", "ifiction \"%[^\"]\" include %n", OPS_1TEXT, FALSE },
@@ -176,6 +191,9 @@ blurb_command syntaxes[] = {
 	{ "storyfile \"filename\"", "storyfile \"%[^\"]\" %n", OPS_1TEXT, TRUE },
 	{ "storyfile leafname \"leafname\"", "storyfile leafname \"%[^\"]\" %n", OPS_1TEXT, FALSE },
 	{ "template path \"folder\"", "template path \"%[^\"]\" %n", OPS_1TEXT, FALSE },
+	{ "text data N \"filename\"", "text data %d \"%[^\"]\" %n", OPS_1NUMBER_1TEXT, FALSE },
+	{ "text data ID \"filename\"", "text data %20[A-Za-z0-9_] \"%[^\"]\" %n", OPS_2TEXT, FALSE },
+	{ "text data \"filename\"", "text data \"%[^\"]\" %n", OPS_1TEXT, FALSE },
 	{ "website \"template\"", "website \"%[^\"]\" %n", OPS_1TEXT, FALSE },
 	{ NULL, NULL, OPS_NO, FALSE }
 };
@@ -272,9 +290,15 @@ copied in |text1|, |num1|, ..., accordingly.
 		case auxiliary_COMMAND: create_auxiliary_file(text1, text2); break;
 		case base64_COMMAND:
 			request_2(BASE64_REQ, text1, text2, FALSE); break;
+		case binary_data_COMMAND: data_chunk(num1, text1, "BINA"); break;
+		case binary_data_text_COMMAND: data_chunk_text(text1, text2, "BINA"); break;
+		case binary_data_noid_COMMAND: data_chunk_text("", text1, "BINA"); break;
 		case copyright_COMMAND: copyright_chunk(text1); break;
 		case cover_COMMAND: @<Declare which file is the cover art@>; break;
 		case css_COMMAND: use_css_code_styles = TRUE; break;
+		case form_data_COMMAND: data_chunk(num1, text1, "FORM"); break;
+		case form_data_text_COMMAND: data_chunk_text(text1, text2, "FORM"); break;
+		case form_data_noid_COMMAND: data_chunk_text("", text1, "FORM"); break;
 		case ifiction_file_COMMAND: metadata_chunk(text1); break;
 		case ifiction_COMMAND: request_1(IFICTION_REQ, "", TRUE); break;
 		case ifiction_public_COMMAND: request_1(IFICTION_REQ, "", FALSE); break;
@@ -313,6 +337,9 @@ copied in |text1|, |num1|, ..., accordingly.
 		case storyfile_include_COMMAND: executable_chunk(text1); break;
 		case storyfile_leafname_COMMAND: set_placeholder_to("STORYFILE", text1, 0); break;
 		case template_path_COMMAND: new_template_path(text1); break;
+		case text_data_COMMAND: data_chunk(num1, text1, "TEXT"); break;
+		case text_data_text_COMMAND: data_chunk_text(text1, text2, "TEXT"); break;
+		case text_data_noid_COMMAND: data_chunk_text("", text1, "TEXT"); break;
 		case website_COMMAND: request_1(WEBSITE_REQ, text1, FALSE); break;
 		
 		default: error_1("***", command); fatal("*** command unimplemented ***\n");

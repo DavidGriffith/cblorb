@@ -32,12 +32,12 @@ copyright text to 100MB of uncompressed choral music.
 
 Our IFF file will consist of a front part and then the chunks, one after
 another, in order of their creation. Every chunk has a type, a 4-character ID
-like |"AUTH"| or |"JPEG"|, specifying what kind of data it holds; some
-chunks are also given resource", " numbers which allow the story file to refer
-to them as it runs -- the pictures, sound effects and the story file itself
+like |"AUTH"| or |"JPEG"|, specifying what kind of data it holds; some chunks
+are also given resource", " numbers which allow the story file to refer to them
+as it runs -- the pictures, sound effects, data files and the story file itself
 all have unique resource numbers. (These are called ``indexed'', because
-references to them appear in a special |RIdx| record in the front part
-of the file -- the ``resource index''.)
+references to them appear in a special |RIdx| record in the front part of the
+file -- the ``resource index''.)
 
 @c
 typedef struct chunk_metadata {
@@ -53,18 +53,18 @@ typedef struct chunk_metadata {
 } chunk_metadata;
 
 
-@ It is not legal to have two or more Snd resources with the same number.  The 
-same goes for Pict resources.  These two linked lists are used to store all the 
-resource numbers encountered.
+@ It is not legal to have two or more Snd resources with the same number.  The
+same goes for Pict and Data resources.  These three linked lists are used to
+store all the resource numbers encountered.
 
 @c
-typedef struct resource_list resource_list;
-struct resource_list {
+typedef struct resource_list {
 	int num;
 	struct resource_list *n;
-};
+} resource_list;
 resource_list *sound_resource = NULL;
 resource_list *pict_resource = NULL;
+resource_list *data_resource = NULL;
 
 @-------------------------------------------------------------------------------
 
@@ -195,11 +195,12 @@ char *legal_Blorb_chunk_types[] = {
 	"AUTH", "(c) ", "Fspc", "RelN", "IFmd", /* miscellaneous identifying data */
 	"JPEG", "PNG ", /* images in different formats */
 	"AIFF", "OGGV", "MIDI", "MOD ", /* sound effects in different formats */
+	"TEXT", "BINA", "FORM", /* data files in different formats */
 	"ZCOD", "GLUL", /* story files in different formats */
 	NULL };
 
 char *legal_Blorb_index_entries[] = {
-	"Pict", "Snd ", "Exec", NULL };
+	"Pict", "Snd ", "Data", "Exec", NULL };
 
 @ Because we are wisely paranoid:
 
@@ -242,15 +243,13 @@ everything is fine.
 	return FALSE;
 }
 
-
-
 @ Because it will make a difference to how we embed a file into our Blorb,
 we need to know whether the chunk in question is already an IFF in its
-own right. Only one type of chunk is, as it happens:
+own right. Only two types of chunk are, as it happens:
 
 @c
 int chunk_type_is_already_an_IFF(char *type) {
-	if (strcmp(type, "AIFF")==0) return TRUE;
+	if (strcmp(type, "FORM")==0 || strcmp(type, "AIFF")==0) return TRUE;
 	return FALSE;
 }
 
@@ -364,6 +363,34 @@ There can be any number of these chunks, too.
 	}
 	sound_resource_num++;
 	sound_chunk(sound_resource_num, fn);
+}
+
+@ |"Data"|: a data file for consumption by the story. This must be available as
+a binary file on disc.  The chunk type determines whether an interpreter reads
+them as binary or text.
+
+Yet again, there can be any number of these chunks.
+
+@c
+/**/ void data_chunk(int num, char *fn, char *type) {
+	if (num < 1)
+		fatal("Data resource number is less than 1.");
+	if (resource_seen(&data_resource, num))
+		fatal("Duplicate Data resource number.");
+
+	add_chunk_to_blorb(type, num, fn, "Data", NULL, 0);
+	no_data_chunks_included++;
+}
+
+@c
+/**/ void data_chunk_text(char *name, char *fn, char *type) {
+	if (name[0] == 0) {
+		printf("! Null data ID, using %d\n", data_resource_num);
+	} else {
+		emit_i6_constant("DATA", name, data_resource_num);
+	}
+	data_resource_num++;
+	data_chunk(data_resource_num, fn, type);
 }
 
 @ |"Exec"|: the executable program, which will normally be a Z-machine or

@@ -450,14 +450,14 @@ is where those are added (to the other links already present, that is).
 }
 
 @p Inform6 Constants.
-The older Blorb creation program, |perlBlorb| would emit helpful 
-constants that allow the programmer to write |PlaySound(SOUND_Boom)| 
-rather than |PlaySound(5)|.  This allows the programmer to more easily 
-remember meaningful names instead of resource numbers.  To use this 
-feature, the programmer  should first declare in a Blurb file what names 
-correspond to what sounds or pictures.  Then |cBlorb| is run with the 
--constant flag to emit the list of constants.  This code can then be 
-included in the Inform6 code.  Whenever the Blurb file is changed, this 
+The older Blorb creation program, |perlBlorb| would emit helpful constants
+that allow the programmer to write |PlaySound(SOUND_Boom)| rather than
+|PlaySound(5)|.  This allows the programmer to more easily remember
+meaningful names instead of resource numbers.  To use this feature, the
+programmer should first declare in a Blurb file what names correspond to
+what sounds, pictures, or data resources.  Then |cBlorb| is run with the
+-constant flag to emit the list of constants.  This code can then be
+included in the Inform6 code.  Whenever the Blurb file is changed, this
 must be done again.
 
 @c
@@ -491,7 +491,7 @@ we copy the necessary HTML into the placeholder |ph|.
 	int launch_website = FALSE, launch_play = FALSE;
 	
 	append_to_placeholder(ph, "<ul>");
-	@<Itemise the blorb file, possibly mentioning pictures and sounds@>;
+	@<Itemise the blorb file, possibly mentioning pictures, sounds, and data resources@>;
 	@<Itemise the website, mentioning how many pages it has@>;
 	@<Itemise the interpreter@>;
 	@<Itemise the library card@>;
@@ -508,12 +508,12 @@ we copy the necessary HTML into the placeholder |ph|.
 
 @
 
-@<Itemise the blorb file, possibly mentioning pictures and sounds@> =
-	if ((no_pictures_included > 1) || (no_sounds_included > 0))
+@<Itemise the blorb file, possibly mentioning pictures, sounds, and data resources@> =
+	if ((no_pictures_included > 1) || (no_sounds_included > 0) || (no_data_chunks_included >0))
 		append_to_placeholder(ph,
 			"<li>The blorb file <b>[STORYFILE]</b> ([BLORBFILESIZE]K in size, "
-			"including [BLORBFILEPICTURES] figures(s) and [BLORBFILESOUNDS] "
-			"sound(s))</li>");
+			"including [BLORBFILEPICTURES] figures(s), [BLORBFILESOUNDS] "
+			"sound(s), and [BLORBFILEDATACHUNKS] data resources)</li>");
 	else
 		append_to_placeholder(ph,
 			"<li>The blorb file <b>[STORYFILE]</b> ([BLORBFILESIZE]K in size)</li>");

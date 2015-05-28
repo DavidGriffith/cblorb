@@ -58,10 +58,12 @@ int current_year_AD = 0; /* e.g., 2008 */
 int blorb_file_size = 0; /* size in bytes of the blorb file written */
 int no_pictures_included = 0; /* number of picture resources included in the blorb */
 int no_sounds_included = 0; /* number of sound resources included in the blorb */
+int no_data_chunks_included = 0; /* number of data resources included in the blorb */
 int HTML_pages_created = 0; /* number of pages created in the website, if any */
 int source_HTML_pages_created = 0; /* number of those holding source */
 int sound_resource_num = 3; /* current sound resource number we're working on */
 int picture_resource_num = 1; /* current picture resource number we're working on */
+int data_resource_num = 1; /* current picture resource number we're working on */
 
 int use_css_code_styles = FALSE; /* use |<span class="X">| markings when setting code */
 char project_folder[MAX_FILENAME_LENGTH]; /* pathname of I7 project folder, if any */
@@ -328,12 +330,14 @@ where they're used.
 		set_placeholder_to_number("BLORBFILESIZE", blorb_file_size/1024);
 		set_placeholder_to_number("BLORBFILEPICTURES", no_pictures_included);
 		set_placeholder_to_number("BLORBFILESOUNDS", no_sounds_included);
+		set_placeholder_to_number("BLORBFILEDATACHUNKS", no_data_chunks_included);
 		printf("! Completed: wrote blorb file of size %d bytes ", blorb_file_size);
 		printf("(%d picture(s), %d sound(s))\n", no_pictures_included, no_sounds_included);
 	} else {
 		set_placeholder_to_number("BLORBFILESIZE", 0);
 		set_placeholder_to_number("BLORBFILEPICTURES", 0);
 		set_placeholder_to_number("BLORBFILESOUNDS", 0);
+		set_placeholder_to_number("BLORBFILEDATACHUNKS", 0);
 		printf("! Completed: no blorb output requested\n");
 	}
 
